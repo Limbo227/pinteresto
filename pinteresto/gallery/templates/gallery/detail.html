@@ -1,0 +1,85 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main role="main">
+        
+    
+    <section class="bg-gray200 pt-5 pb-5">
+    <div class="container">
+    	<div class="row justify-content-center">
+    		<div class="col-md-7">
+    			<article class="card">
+    			<img class="card-img-top mb-2" src="{{ all_news.photo.url }}">
+    			<div class="card-body">
+    				<h1 class="card-title display-4">
+    				{{ all_news.title }} </h1>
+    				<ul>
+    					<li>{{ all_news.category }}</li>
+					</ul>
+    				<small class="d-block"><a class="btn btn-sm btn-gray200" href="#"><i class="fa fa-external-link"></i> Visit Website</a></small>
+					<a href="{% url 'user:author' all_news.author.id %}">{{ all_news.author }}</a>
+					<!-- Begin Comments -replace demowebsite with your own id
+                    ================================================== -->
+						{% if comments %}
+						{% for comment in comments %}
+							<div id="comments" class="mt-4">
+								<div id="disqus_thread">
+									<a href="{% url 'user:author' comment.author_name.pk %}">{{ comment.author_name }}</a>
+									<a href="{% url 'news:delete_com' comment.pk %}" class="btn btn-warning">delete</a>
+									<p>{{ comment.comment }}</p>
+								</div>
+							</div>
+						{% endfor %}
+						{% else %}
+						<h2>Нету коментариев</h2>
+						{% endif %}
+
+					{% if user.is_authenticated %}
+					<form method="POST" action="{% url 'news:detail' all_news.pk %}">
+						{% csrf_token %}
+						{{ form.as_p }}
+						<button class="btn btn-success">Comment</button>
+					</form>
+    				{% else %}
+						<div class="mt-4">
+							<a href="{% url 'user:login' %}">Залогиньтесь чтобы оставить коментарий</a>
+							<a href="{% url 'user:register' %}" >Или зарегистрируйтесь</a>
+						</div>
+					{% endif %}
+					{% if user == all_news.author %}
+					<a href="{% url 'user:delety' all_news.pk %}" class="btn btn-warning">Delete</a>
+					{% endif %}
+
+					<!--End Comments
+
+                    ================================================== -->
+    			</div>
+    			</article>
+    		</div>
+    	</div>
+    </div>
+    <div class="container-fluid mt-5">
+    	<div class="row">
+    		<h5 class="font-weight-bold">More like this</h5>
+    		<div class="card-columns">
+    			{% for i in all_das %}
+    			<div class="card card-pin">
+    				<img class="card-img" src="{{ i.photo.url }}" alt="{{i.photo.url}}">
+    				<div class="overlay">
+    					<h2 class="card-title title">{{ i.title }}</h2>
+    					<div class="more">
+    						<a href="{% url 'news:detail' i.id %}">
+    						<i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i> More </a>
+    					</div>
+    				</div>
+    			</div>
+				{% endfor %}
+    		</div>
+    	</div>
+    </div>
+    </section>
+        
+    </main>
+{% endblock %}
+

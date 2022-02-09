@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if query %}
+
+    <h1>Posts containing "{{ query }}"</h1>
+    <h3>{% with results.count as total_results %} Found {{ total_results }} result {{ total_results|pluralize }} {% endwith %} </h3>
+<div class="container-fluid">
+    	<div class="row">
+    		<div class="card-columns">
+    {% for i in results %}
+
+        <div class="card card-pin">
+					<fas type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal">
+					  <div class="statya">
+						  <style>
+							  #statya:hover img { width:500px; }
+						  </style>
+						  <img class="card-img" src="{{ i.photo.url }}">
+					  </div>
+
+					<div class="overlay">
+    					<h2 class="card-title title">{{ i.title }}</h2>
+    					<div class="more">
+    						<a href="{% url 'news:detail' i.id %}">
+    						<i class="fa fa-arrow-circle-o-right" aria-hidden=""></i> More </a>
+    					</div>
+    				</div>
+					</fas>
+    			</div>
+
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+					  <img src="{{ i.photo.url }}" alt="">
+					</div>
+				  </div>
+				</div>
+
+    {% empty %}
+        <p>There are no results for your query.</p>
+    {% endfor %}
+				</div>
+		</div>
+</div>
+    <p><a href="{% url 'news:search' %}">Search again</a></p>
+{% else %}
+    <h1>Search for posts</h1>
+    <form action="." method="get">
+        {{ form.as_p }}
+        <input type="submit" value="Search">
+    </form>
+{% endif %}
+
+{% endblock %}
